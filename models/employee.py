@@ -32,4 +32,4 @@ class Employee(Base):
         
 
     def __str__(self):
-        return f"ID {self.id}: {self.name} {self.last_name} {self.dob} {self.salary} {self.position} {self.employment_dt}"
+        return f"ID {self.id}: {self.name} | {self.last_name} | {self.dob} | {self.salary} | {self.position} | {self.employment_dt}"

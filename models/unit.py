@@ -12,3 +12,11 @@ class Unit(Base):
     
     employees = relationship('Employee', back_populates='unit', foreign_keys="Employee.unit_id")
     
+    def __init__(self, name:str, location:str, head_id:int=None, **kw):
+        super().__init__(**kw)
+        self.name = name
+        self.head_id = head_id
+        self.location = location
+    
+    def __str__(self):
+        return f"ID {self.id}: {self.name} | {self.head_id} | {self.location}"

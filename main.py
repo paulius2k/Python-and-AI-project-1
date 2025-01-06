@@ -1,6 +1,7 @@
 from models.database import get_session
 from modules.database_creator import create_all_tables
 import modules.employee_functions as ef
+import modules.unit_functions as uf
 
 def main():
     db = get_session()
@@ -18,6 +19,10 @@ def main():
                     f"4. Delete person\n"
                     f"---------------------\n"
                     f"UNITS:\n"
+                    f"5. List all units\n"
+                    f"6. Add new unit\n"
+                    f"7. Update unit\n"
+                    f"---------------------\n"
                     f"0. Exit\n"
                     f">> "
                 )
@@ -33,6 +38,13 @@ def main():
                         ef.update_employee(db)
                     case 4:
                         ef.delete_employee(db)
+                    case 5:
+                        uf.get_all_units(db)
+                    case 6:
+                        unit = uf.get_input_for_new_unit()
+                        uf.create_unit(unit, db)
+                    case 7:
+                        pass
                     case 0:
                         print()
                         print("Goodbye!")

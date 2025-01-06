@@ -4,7 +4,6 @@
 #    - Galimybė peržiūrėti visus skyriaus darbuotojus
 #    - Galimybė perkelti darbuotoją į kitą skyrių
 
-from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select, update
 from models.unit import Unit
@@ -13,6 +12,8 @@ def get_input_for_new_unit():
     try:
         name = input("Enter unit name: ")
         head_id = input("Enter ID of the head of unit (press Enter if not known): ")
+        if head_id == "":
+            head_id = None  
         location = input("Enter unit location: ")
     except Exception as err:       
         print("Invalid input")
@@ -35,24 +36,28 @@ def create_unit(unit, session):
     
     return None
 
-def get_all_employees(session):
+def get_all_units(session):
     with session:
-        query = select(Employee)
+        query = select(Unit)
         result = session.scalars(query)
         print()
-        for person in result:
-            print(person)
-
+        
+        try:
+            next_result = next(result)
+            print(next_result)
+        except StopIteration:
+            print("No units found.")
+                       
         input("Press enter to continue...")
         print()
     return None
 
-def update_employee(session):
+def update_unit(session):
     person_id = input("Enter employee id you want to update: ")
     try:
         with session:
  
-            query = select(Employee).filter_by(id=person_id)
+            query = select(Unit).filter_by(id=person_id)
             person = session.execute(query).scalar_one()
             print()
             
@@ -60,7 +65,7 @@ def update_employee(session):
                 print(person)
                 confirm = input("Are you sure you want to update this employee? (y/n): ")
                 if confirm.lower() == 'y':
-                    new_data = get_input()
+                    new_data = get_input_for_new_unit()
                     
                     query = (
                         update(Employee)
