@@ -7,6 +7,7 @@
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select, update
 from models.unit import Unit
+from models.employee import Employee
 
 def get_input_for_new_unit():
     try:
@@ -19,7 +20,6 @@ def get_input_for_new_unit():
         print("Invalid input")
         return None
     return name, head_id, location
-
 
 def create_unit(unit, session):
     try:
@@ -40,47 +40,63 @@ def get_all_units(session):
     with session:
         query = select(Unit)
         result = session.scalars(query)
+        results_list = list(result)
         print()
+        print("-"*50)
         
-        try:
-            next_result = next(result)
-            print(next_result)
-        except StopIteration:
+        if results_list:
+            for unit in results_list:
+                print(unit)
+                print("     Employees:")
+                query2 = select(Employee).where(Employee.unit_id == unit.id)
+                all_employees = session.scalars(query2)
+                employees_list = list(all_employees)
+                if employees_list:
+                    for employee in employees_list:
+                        print(f"     {employee}")
+                else:
+                    print("     No employees assigned to this unit.")
+        else:
             print("No units found.")
                        
+        print()
         input("Press enter to continue...")
         print()
     return None
 
 def update_unit(session):
-    person_id = input("Enter employee id you want to update: ")
+    unit_id = input("Enter unit id you want to update: ")
     try:
         with session:
  
-            query = select(Unit).filter_by(id=person_id)
-            person = session.execute(query).scalar_one()
+            query = select(Unit).filter_by(id=unit_id)
+            unit = session.execute(query).scalar_one()
             print()
             
             while True:
-                print(person)
-                confirm = input("Are you sure you want to update this employee? (y/n): ")
+                print(unit)
+                confirm = input("Are you sure you want to update this unit? (y/n): ")
                 if confirm.lower() == 'y':
                     new_data = get_input_for_new_unit()
-                    
+
+                    # here we check if the new data is empty, if it is, we keep the old data
+                    processed_data = [
+                        new_data[i] if new_data[i] not in [None, ''] else getattr(unit, attr)
+                        for i, attr in enumerate(['name', 'head_id', 'location'])
+                    ]
+
                     query = (
-                        update(Employee)
-                        .where(Employee.id == person_id)
+                        update(Unit)
+                        .where(Unit.id == unit_id)
                         .values(
-                            name=new_data[0], 
-                            last_name=new_data[1], 
-                            dob=new_data[2], 
-                            salary=new_data[3], 
-                            position=new_data[4])
+                            name=processed_data[0], 
+                            head_id=processed_data[1], 
+                            location=processed_data[2])
                     )
                     session.execute(query)
                     session.commit()
                     
-                    print("Employee updated")
+                    print("Unit updated")
                     break
                 elif confirm.lower() == 'n':
                     print("Update aborted")
@@ -93,37 +109,7 @@ def update_unit(session):
             print()
                 
     except NoResultFound:
-        print("Employee not found")
-        print()
-        input("Press enter to continue...")
-    return None
-
-def delete_employee(session):
-    person_id = input("Enter employee id you want to delete: ")
-    try:
-        with session:  
-            query = select(Employee).filter_by(id=person_id)
-            person = session.execute(query).scalar_one()
-            print()
-            while True:
-                print(person)
-                confirm = input("Are you sure you want to delete this employee? (y/n): ")
-                if confirm.lower() == 'y':
-                    session.delete(person)
-                    session.commit()
-                    print("Employee deleted")
-                    break
-                elif confirm.lower() == 'n':
-                    print("Delete aborted")
-                    break
-                else:
-                    print("Invalid input")
-
-            print()
-            input("Press enter to continue...")
-            print()
-    except NoResultFound:
-        print("Employee not found")
+        print("Unit not found")
         print()
         input("Press enter to continue...")
     return None

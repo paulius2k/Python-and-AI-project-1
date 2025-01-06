@@ -2,6 +2,7 @@ from models.database import get_session
 from modules.database_creator import create_all_tables
 import modules.employee_functions as ef
 import modules.unit_functions as uf
+import modules.project_functions as pf
 
 def main():
     db = get_session()
@@ -9,9 +10,8 @@ def main():
     while True:
         try:
             while True:
-                
                 selection = input(
-                    f"Enter your action:\n"
+                    f"Choose action:\n"
                     f"EMPLOYEES:\n"
                     f"1. List all employees\n"
                     f"2. Add new person\n"
@@ -23,6 +23,12 @@ def main():
                     f"6. Add new unit\n"
                     f"7. Update unit\n"
                     f"---------------------\n"
+                    f"PROJECTS:\n"
+                    f"8. List all projects\n"
+                    f"9. Add new project\n"
+                    f"10. Assign employee to a project\n"
+                    f"11. Remove employee from a project\n"
+                    f"---------------------\n"                    
                     f"0. Exit\n"
                     f">> "
                 )
@@ -30,7 +36,10 @@ def main():
                 
                 match selection:
                     case 1:
-                        ef.get_all_employees(db)
+                        ef.get_all_employees(db, list_projects=True)
+                        print()
+                        input("Press enter to continue...")
+                        print()
                     case 2:
                         person = ef.get_input_for_employee()
                         ef.create_employee(person, db)
@@ -44,7 +53,19 @@ def main():
                         unit = uf.get_input_for_new_unit()
                         uf.create_unit(unit, db)
                     case 7:
-                        pass
+                        uf.update_unit(db)
+                    case 8:
+                        pf.get_projects(db, list_employees=True)
+                        print()
+                        input("Press enter to continue...")
+                        print()
+                    case 9:
+                        project = pf.get_input_for_new_project()
+                        pf.create_project(project, db)
+                    case 10:
+                        pf.modify_team_members(db, "add")
+                    case 11:
+                        pf.modify_team_members(db, "remove")
                     case 0:
                         print()
                         print("Goodbye!")
@@ -56,6 +77,7 @@ def main():
         except Exception as err:
             print(f"Error: {err}")
             input("Something went wrong. Try again. Press enter to continue...")
+            print()
     
 
     # # task1.employee = new_employee

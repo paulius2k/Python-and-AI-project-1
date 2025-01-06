@@ -13,14 +13,18 @@ def get_input_for_employee():
         name = input("Enter employee name: ")
         last_name = input("Enter employee last name: ")
         dob = date_input("Enter date of birth (YYYY-MM-DD): ", allow_future=False)
-        salary = int(input("Enter salary: "))
+        salary = input("Enter salary: ")
+        if salary in [None, '']:
+            salary = None
+        else:
+            salary = int(salary)
+        
         position = input("Enter employee position: ")
-        unit = input("Enter employee's unit ID (press enter if not known): ")
+        unit_id = input("Enter employee's unit ID (press enter if not known): ")
     except Exception as err:       
         print("Invalid input")
         return None
-    return name, last_name, dob, salary, position, unit
-
+    return name, last_name, dob, salary, position, unit_id
 
 def create_employee(person, session):
     try:
@@ -37,16 +41,22 @@ def create_employee(person, session):
     
     return None
 
-def get_all_employees(session):
+def get_all_employees(session, list_projects=False):
     with session:
         query = select(Employee)
         result = session.scalars(query)
+        results_list = list(result)
         print()
-        for person in result:
-            print(person)
+        if results_list:
+            for person in results_list:
+                print(person)
+                if person.projects and list_projects:
+                    print("     Participates in projects:")
+                    for project in person.projects:
+                        print(f"     {project}")
+        else:
+            print("No employees found.")
 
-        input("Press enter to continue...")
-        print()
     return None
 
 def update_employee(session):
@@ -62,17 +72,27 @@ def update_employee(session):
                 print(person)
                 confirm = input("Are you sure you want to update this employee? (y/n): ")
                 if confirm.lower() == 'y':
+                    
+                    print()
+                    print("Enter new data (press enter to keep old data)")
                     new_data = get_input_for_employee()
+                    
+                    # here we check if the new data is empty, if it is, we keep the old data
+                    processed_data = [
+                        new_data[i] if new_data[i] not in [None, ''] else getattr(person, attr)
+                        for i, attr in enumerate(['name', 'last_name', 'dob', 'salary', 'position', 'unit_id'])
+                    ]
                     
                     query = (
                         update(Employee)
                         .where(Employee.id == person_id)
                         .values(
-                            name=new_data[0], 
-                            last_name=new_data[1], 
-                            dob=new_data[2], 
-                            salary=new_data[3], 
-                            position=new_data[4])
+                            name=processed_data[0],
+                            last_name=processed_data[1], 
+                            dob=processed_data[2], 
+                            salary=processed_data[3], 
+                            position=processed_data[4],
+                            unit_id=processed_data[5])
                     )
                     session.execute(query)
                     session.commit()

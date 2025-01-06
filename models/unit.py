@@ -11,6 +11,7 @@ class Unit(Base):
     location = Column(String(255))
     
     employees = relationship('Employee', back_populates='unit', foreign_keys="Employee.unit_id")
+    head = relationship('Employee', foreign_keys=[head_id])
     
     def __init__(self, name:str, location:str, head_id:int=None, **kw):
         super().__init__(**kw)
@@ -19,4 +20,9 @@ class Unit(Base):
         self.location = location
     
     def __str__(self):
-        return f"ID {self.id}: {self.name} | {self.head_id} | {self.location}"
+        if self.head_id:
+            head_id_txt = f"{self.head.name} {self.head.last_name}"
+        else:
+            head_id_txt = self.head_id
+
+        return f"ID {self.id}: {self.name} | head: {head_id_txt} | location: {self.location}"

@@ -2,8 +2,6 @@ from sqlalchemy import Column, Integer, String, Date, func, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
 from .project_employee import project_employee
-from .unit import Unit
-from .project import Project
 from datetime import datetime
 
 class Employee(Base):
@@ -32,4 +30,4 @@ class Employee(Base):
         
 
     def __str__(self):
-        return f"ID {self.id}: {self.name} | {self.last_name} | {self.dob} | {self.salary} | {self.position} | {self.employment_dt}"
+        return f"ID {self.id}: {self.name} | {self.last_name} | born: {self.dob} | {self.salary} | {self.position} | employed: {self.employment_dt} | {self.unit.name}"
