@@ -2,8 +2,6 @@ from datetime import datetime
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.sql import select, update
 from models.employee import Employee
-# from models.project import Project
-# from models.task import Task
 from models.database import get_session
 from modules.utilities import date_input
 
@@ -44,8 +42,10 @@ def create_employee(person, session):
 def get_all_employees(session, list_projects=False):
     with session:
         query = select(Employee)
-        result = session.scalars(query)
-        results_list = list(result)
+        result = session.scalars(query).all()   # .all() converts the result to a list
+        # results_list = list(result)           # this is the same as above
+        results_list = result
+        
         print()
         if results_list:
             for person in results_list:

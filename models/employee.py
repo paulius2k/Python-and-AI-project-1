@@ -16,8 +16,8 @@ class Employee(Base):
     unit_id = Column(Integer, ForeignKey('units.id'), nullable=True)
 
     projects = relationship('Project', secondary=project_employee, back_populates='employees')
-    unit = relationship('Unit', back_populates='employees', foreign_keys=[unit_id])   
-    # tasks = relationship('Task', back_populates='employee')     # klasių surišimas: "ištrauk užduotį su jos darbuotoju"
+    unit = relationship('Unit', back_populates='employees', foreign_keys='Employee.unit_id')   
+
     
     def __init__(self, name:str, last_name:str, dob:datetime, salary:int, position:str, **kw):
         super().__init__(**kw)
