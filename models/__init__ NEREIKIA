@@ -1,0 +1,26 @@
+from models.database import Base, engine
+from models.employee import Employee
+from models.project import Project
+from models.unit import Unit
+
+print("Importing models")
+
+# Python Package Definition:
+
+# A folder with an __init__.py file is considered a package. 
+# Without this file, Python does not recognize the folder as a package, 
+# and importing modules within that folder becomes unreliable.
+# If models is not recognized as a package, importing models like 
+# from models.employee import Employee may fail or not work as expected in 
+# Alembic's env.py or during your application runtime.
+
+# SQLAlchemy Metadata Registration:
+# SQLAlchemy uses Base.metadata to track all tables defined in your models.
+# If models are not correctly imported, their tables will not be registered with 
+# Base.metadata, causing Base.metadata.tables.keys() to be empty.
+
+# Alembic and Model Import:
+# Alembic’s env.py relies on target_metadata being populated with your 
+# SQLAlchemy model metadata (Base.metadata).
+# Without proper imports (due to missing __init__.py), 
+# Alembic won't detect your models or their tables, resulting in empty migrations.

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, Table
-from .database import Base
+from models.database import Base
 
 project_employee = Table(
             'project_employee', 

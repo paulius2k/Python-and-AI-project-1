@@ -19,6 +19,8 @@ def get_input_for_employee():
         
         position = input("Enter employee position: ")
         unit_id = input("Enter employee's unit ID (press enter if not known): ")
+        if unit_id in [None, '']:
+            unit_id = None
     except Exception as err:       
         print("Invalid input")
         return None

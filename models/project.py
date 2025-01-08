@@ -8,8 +8,8 @@
 
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.orm import relationship
-from .database import Base
-from .project_employee import project_employee
+from models.database import Base
+from models.project_employee import project_employee
 
 class Project(Base):
     __tablename__ = "projects"

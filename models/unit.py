@@ -1,18 +1,18 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from .database import Base
+from models.database import Base
 
 class Unit(Base):
     __tablename__ = "units"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(255))
-    head_id = Column(Integer, ForeignKey('employees.id'))           # foreign key į employees LENTELĘ
+    head_id = Column(Integer, ForeignKey('employees.id', name='fk_unit_head_id'))           # foreign key į employees LENTELĘ
     location = Column(String(255))
     
     # čia ryšiai nurodomi į KLASĖS foreign key, o ne į LENTELĖS stulpelį
     employees = relationship('Employee', back_populates='unit', foreign_keys="Employee.unit_id")
-    head = relationship('Employee', foreign_keys="Unit.head_id")
+    head = relationship('Employee', back_populates='managed_dep', foreign_keys="Unit.head_id", uselist=False)
     
     
     def __init__(self, name:str, location:str, head_id:int=None, **kw):

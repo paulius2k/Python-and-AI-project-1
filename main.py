@@ -1,5 +1,5 @@
 from models.database import get_session
-from modules.database_creator import create_all_tables
+# from modules.database_creator import create_all_tables
 import modules.employee_functions as ef
 import modules.unit_functions as uf
 import modules.project_functions as pf
@@ -105,5 +105,5 @@ def main():
 
 
 if __name__ == "__main__":
-    create_all_tables()
+    # create_all_tables()
     main()
